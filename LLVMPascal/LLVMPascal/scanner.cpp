@@ -105,8 +105,7 @@ namespace llvmpascal
 
             handleLineComment();
             handleBlockComment();
-        }
-        while (std::isspace(currentChar_));
+        } while (std::isspace(currentChar_));
     }
 
     void Scanner::handleLineComment()
@@ -160,8 +159,7 @@ namespace llvmpascal
                     errorFlag_ = true;
                     break;
                 }
-            }
-            while (currentChar_ != '}');
+            } while (currentChar_ != '}');
 
             if (!input_.eof())
             {
