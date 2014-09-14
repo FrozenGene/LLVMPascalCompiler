@@ -25,7 +25,7 @@ namespace llvmpascal
       public:
         Dictionary();
         std::tuple<TokenType, TokenValue, int> lookup(const std::string& name) const;
-        bool Dictionary::haveToken(const std::string& name) const;
+        bool haveToken(const std::string& name) const;
       private:
         void addToken(std::string name, std::tuple<TokenValue, TokenType, int> tokenMeta);
 
