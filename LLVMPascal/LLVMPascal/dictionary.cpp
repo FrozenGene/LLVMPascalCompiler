@@ -68,6 +68,7 @@ namespace llvmpascal
         addToken("until",        std::make_tuple(TokenValue::UNTIL,            TokenType::KEYWORDS,  -1));
         addToken("var",          std::make_tuple(TokenValue::VAR,              TokenType::KEYWORDS,  -1));
         addToken("while",        std::make_tuple(TokenValue::WHILE,            TokenType::KEYWORDS,  -1));
+        addToken("write",      std::make_tuple(TokenValue::WRITELN,          TokenType::KEYWORDS, -1));
         addToken("writeln",      std::make_tuple(TokenValue::WRITELN,          TokenType::KEYWORDS,  -1));
         addToken("in",           std::make_tuple(TokenValue::IN,               TokenType::KEYWORDS,  2));
         addToken("or",           std::make_tuple(TokenValue::OR,               TokenType::KEYWORDS,  10));

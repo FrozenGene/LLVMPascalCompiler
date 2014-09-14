@@ -31,6 +31,8 @@ thEn
 tO
 Until
 vAr				whIle
+write
+writeln
 
 (*You can not see me*)
 
