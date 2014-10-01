@@ -71,7 +71,7 @@ namespace llvmpascal
     void Scanner::makeToken(TokenType tt, TokenValue tv,
                             const TokenLocation& loc, std::string name, int symbolPrecedence)
     {
-        token_ = Token(tt, tv, loc, name, symbolPrecedence);
+        token_ = Token(tt, tv, loc, buffer_, symbolPrecedence);
         buffer_.clear();
         state_ = State::NONE;
     }
@@ -79,7 +79,7 @@ namespace llvmpascal
     void Scanner::makeToken(TokenType tt, TokenValue tv,
                             const TokenLocation& loc, long intValue, std::string name)
     {
-        token_ = Token(tt, tv, loc, intValue, name);
+        token_ = Token(tt, tv, loc, intValue, buffer_);
         buffer_.clear();
         state_ = State::NONE;
     }
@@ -87,7 +87,7 @@ namespace llvmpascal
     void Scanner::makeToken(TokenType tt, TokenValue tv,
                             const TokenLocation& loc, double realValue, std::string name)
     {
-        token_ = Token(tt, tv, loc, realValue, name);
+        token_ = Token(tt, tv, loc, realValue, buffer_);
         buffer_.clear();
         state_ = State::NONE;
     }
