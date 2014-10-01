@@ -114,9 +114,9 @@ namespace llvmpascal
 
         if (currentChar_ == '(' && peekChar() == '*')
         {
-            // eat *
+            // currenChar is ( and eat (, update currentChar_ to *
             getNextChar();
-            // update currentChar_
+            // currentChar is * and eat it, update currentChar_ to the next char.
             getNextChar();
 
             while (!(currentChar_ == '*' && peekChar() == ')'))
@@ -135,9 +135,9 @@ namespace llvmpascal
 
             if (!input_.eof())
             {
-                // eat *
+                // eat * and update currentChar_ to (
                 getNextChar();
-                // eat ) and update currentChar_
+                // eat ) and update currentChar_ to the next Char
                 getNextChar();
             }
         }
