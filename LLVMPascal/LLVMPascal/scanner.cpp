@@ -135,9 +135,9 @@ namespace llvmpascal
 
             if (!input_.eof())
             {
-                // eat *
+                // eat )
                 getNextChar();
-                // eat ) and update currentChar_
+                // update currentChar_
                 getNextChar();
             }
         }
