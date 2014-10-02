@@ -172,7 +172,9 @@ namespace llvmpascal
     Token Scanner::getNextToken()
     {
         bool matched = false;
-
+        
+        errorFlag_ = false;
+        
         do
         {
             if (state_ != State::NONE)
@@ -228,7 +230,7 @@ namespace llvmpascal
                     }
                     // if it is digit or xdigit
                     else if (std::isdigit(currentChar_) ||
-                             (currentChar_ == '$' && std::isxdigit(peekChar())))
+                             (currentChar_ == '$' /*&& std::isxdigit(peekChar()) */ )) 
                     {
                         state_ = State::NUMBER;
                     }
@@ -330,7 +332,16 @@ namespace llvmpascal
                 numberState = NumberState::DONE;
             }
         } while (numberState != NumberState::DONE);
-
+        
+        // process error output
+        // such as 12...45, $zhello
+        if(errorFlag_)
+        {
+            makeToken(TokenType::UNKNOWN, TokenValue::UNRESERVED, loc_,
+                      0.0, buffer_);
+            return;
+        }
+        
         if (isFloat)
         {
             makeToken(TokenType::REAL, TokenValue::UNRESERVED, loc_,
@@ -404,7 +415,7 @@ namespace llvmpascal
         // keyword or not
         // because Pascal is not case sensitive
         // we should transform it to lower case
-        std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), std::tolower);
+        std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), tolower);
         // use dictionary to judge it is keyword or not
         auto tokenMeta = dictionary_.lookup(buffer_);
         makeToken(std::get<0>(tokenMeta), std::get<1>(tokenMeta), loc_, buffer_, std::get<2>(tokenMeta));
@@ -473,6 +484,10 @@ namespace llvmpascal
         {
             errorToken(getTokenLocation().toString() + "Hexadecimal number format error.");
             errorFlag_ = true;
+            
+            addToBuffer(currentChar_);
+            //eat error character for outputing as a UNKNOWN tokenType and update currentChar_
+            getNextChar();
         }
     }
 
