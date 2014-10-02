@@ -33,7 +33,10 @@ int main()
 
     while (scanner.getToken().getTokenType() != TokenType::END_OF_FILE)
     {
-        scanner.getToken().dump();
+        if (!scanner.getErrorFlag())
+        {
+            scanner.getToken().dump();
+        }
         scanner.getNextToken();
     }
 
