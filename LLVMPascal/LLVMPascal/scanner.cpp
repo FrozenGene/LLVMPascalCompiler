@@ -228,7 +228,7 @@ namespace llvmpascal
                     }
                     // if it is digit or xdigit
                     else if (std::isdigit(currentChar_) ||
-                             (currentChar_ == '$' && std::isxdigit(peekChar())))
+                             (currentChar_ == '$'))
                     {
                         state_ = State::NUMBER;
                     }
@@ -267,6 +267,7 @@ namespace llvmpascal
         if (currentChar_ == '$')
         {
             numberBase = 16;
+
             // eat $ and update currentChar_
             getNextChar();
         }
@@ -331,15 +332,24 @@ namespace llvmpascal
             }
         } while (numberState != NumberState::DONE);
 
-        if (isFloat)
+        if (!errorFlag_)
         {
-            makeToken(TokenType::REAL, TokenValue::UNRESERVED, loc_,
-                      std::stod(buffer_), buffer_);
+            if (isFloat)
+            {
+                makeToken(TokenType::REAL, TokenValue::UNRESERVED, loc_,
+                    std::stod(buffer_), buffer_);
+            }
+            else
+            {
+                makeToken(TokenType::INTEGER, TokenValue::UNRESERVED, loc_,
+                    std::stol(buffer_, 0, numberBase), buffer_);
+            }
         }
         else
         {
-            makeToken(TokenType::INTEGER, TokenValue::UNRESERVED, loc_,
-                      std::stol(buffer_, 0, numberBase), buffer_);
+            // just clear buffer_ and set the state to State::NONE
+            buffer_.clear();
+            state_ = State::NONE;
         }
     }
 
@@ -404,7 +414,7 @@ namespace llvmpascal
         // keyword or not
         // because Pascal is not case sensitive
         // we should transform it to lower case
-        std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), std::tolower);
+        std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), ::tolower);
         // use dictionary to judge it is keyword or not
         auto tokenMeta = dictionary_.lookup(buffer_);
         makeToken(std::get<0>(tokenMeta), std::get<1>(tokenMeta), loc_, buffer_, std::get<2>(tokenMeta));
