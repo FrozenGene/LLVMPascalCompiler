@@ -173,6 +173,8 @@ namespace llvmpascal
     {
         bool matched = false;
 
+        errorFlag_ = false;
+
         do
         {
             if (state_ != State::NONE)
