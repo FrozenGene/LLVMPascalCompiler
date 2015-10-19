@@ -15,8 +15,35 @@ namespace llvmpascal
 {
     Dictionary::Dictionary()
     {
+        // see pascal standard 6.7.1 and 6.7.2.1
+        
+        /*
+        
+        Operator precedences shall be according to four classes of operators as follows. 
+        The operator not shall have the highest precedence, followed by the multiplying-operators,
+        then the adding-operators and signs, and finally, with the lowest precedence, the 
+        relational-operators. 
+
+        multiplying-operator = '*' | '/' | 'div' | 'mod' | 'and'
+        adding-operator = '+' | '-' | 'or'
+        relational-operator = '=' | '<>' | '<' | '>' | '<=' | '>=' | 'in'
+
+        NOTE:
+        I also add some(not all) free pascal operator such as xor, shr and so on. Maybe I will
+        remove it in the future, because which are not belong to ISO Pascal.
+
+        If there are free pascal extension, the precedence is like this:
+
+        Operator	                             Precedence	        Category
+        Not, @	                                 Highest (first)	Unary operators
+        * / div mod and shl shr as << >>	     Second	            Multiplying operators
+        + - or xor	                             Third	            Adding operators
+        = <> < > <= >= in is	                 Lowest (Last)	    relational operators
+  
+        see: http://www.freepascal.org/docs-html/ref/refch12.html
+        */
         addToken(":=",           std::make_tuple(TokenValue::ASSIGN,           TokenType::OPERATORS, 0));
-        addToken("=",            std::make_tuple(TokenValue::EQUAL,            TokenType::OPERATORS, 1));
+        addToken("=",            std::make_tuple(TokenValue::EQUAL,            TokenType::OPERATORS, 2));
         addToken("<>",           std::make_tuple(TokenValue::NOT_EQUAL,        TokenType::OPERATORS, 2));
         addToken(">=",           std::make_tuple(TokenValue::GREATER_OR_EQUAL, TokenType::OPERATORS, 2));
         addToken(">",            std::make_tuple(TokenValue::GREATER_THAN,     TokenType::OPERATORS, 2));
@@ -36,7 +63,7 @@ namespace llvmpascal
         addToken("]",            std::make_tuple(TokenValue::RIGHT_SQUARE,     TokenType::DELIMITER, -1));
         addToken(";",            std::make_tuple(TokenValue::SEMICOLON,        TokenType::DELIMITER, -1));
         addToken("^",            std::make_tuple(TokenValue::UPARROW,          TokenType::DELIMITER, -1));
-        addToken("and",          std::make_tuple(TokenValue::AND,              TokenType::KEYWORDS,  -1));
+        addToken("and",          std::make_tuple(TokenValue::AND,              TokenType::KEYWORDS,  20));
         addToken("array",        std::make_tuple(TokenValue::ARRAY,            TokenType::KEYWORDS,  -1));
         addToken("begin",        std::make_tuple(TokenValue::BEGIN,            TokenType::KEYWORDS,  -1));
         addToken("case",         std::make_tuple(TokenValue::CASE,             TokenType::KEYWORDS,  -1));
