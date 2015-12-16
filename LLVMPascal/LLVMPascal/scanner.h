@@ -42,6 +42,8 @@ namespace llvmpascal
 
         void            makeToken(TokenType tt, TokenValue tv,
                                   const TokenLocation& loc, double realValue, std::string name);
+        void            makeToken(TokenType tt, TokenValue tv,
+                                  const TokenLocation& loc, const std::string& strVale, std::string name);
 
         void            handleEOFState();
         void            handleIdentifierState();

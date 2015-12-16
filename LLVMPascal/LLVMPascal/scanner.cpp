@@ -92,6 +92,13 @@ namespace llvmpascal
         state_ = State::NONE;
     }
 
+    void Scanner::makeToken(TokenType tt, TokenValue tv,
+                            const TokenLocation& loc, const std::string& strValue, std::string name)
+    {
+        token_ = Token(tt, tv, loc, strValue, name);
+        buffer_.clear();
+        state_ = State::NONE;
+    }
 
 
     void Scanner::preprocess()
@@ -320,6 +327,17 @@ namespace llvmpascal
             // change number state
             if (currentChar_ == '.')
             {
+                // first time, isFloat is false.
+                // But maybe enter float number state again, such as 12.4.5
+                // In fact, we can do it also in the parse phase. I am thinking
+                // about do it in the scanner phase or the parse phase. But now
+                // I do it in the scanner phase.
+                if (isFloat)
+                {
+                    errorToken(getTokenLocation().toString() + "Fraction number can not have more than one dot.");
+                    errorFlag_ = true;
+                }
+
                 numberState = NumberState::FRACTION;
             }
             else if (currentChar_ == 'E' || currentChar_ == 'e')
@@ -393,7 +411,7 @@ namespace llvmpascal
         else
         {
             makeToken(TokenType::STRING_LITERAL, TokenValue::UNRESERVED,
-                      loc_, buffer_, -1);
+                      loc_, buffer_, buffer_);
         }
     }
 
@@ -489,13 +507,17 @@ namespace llvmpascal
     void Scanner::handleFraction()
     {
         // currentChar_ is . (dot)
-
-        // if we have number 4..12. just simple error condition.
-        // our compiler has one big difference compared with
-        // commercial compiler, that is about error conditions.
-        if (peekChar() == '.')
+        /*
+            unsigned-real = digit-sequence '.' fractional-part [ 'e' scale-factor ]
+                             | digit-sequence 'e' scale-factor
+            unsigned-integer = digit-sequence
+            fractional-part = digit-sequence
+            scale-factor = [ sign ] digit-sequence
+            digit-sequence = digit {digit}
+        */
+        if (!std::isdigit(peekChar()))
         {
-            errorToken(getTokenLocation().toString() + "Fraction number can not have dot after dot");
+            errorToken(getTokenLocation().toString() + "Fraction number part should be numbers");
             errorFlag_ = true;
         }
 
