@@ -60,12 +60,6 @@ namespace llvmpascal
         ExprASTPtr            parseStringExpr(Token token);
 
         // leave set, array, filed, pointer type expression to implementation.
-        /* 
-        ExprASTPtr            parseSetExpr();
-        VarExprASTPtr         parseArrayExpr(VarExprASTPtr varExpr, Types::TypeDecl*& type);
-        VarExprASTPtr         parseFieldExpr(VarExprASTPtr varExpr, Types::TypeDecl*& type);
-        VarExprASTPtr         parsePointerExpr(VarExprASTPtr varExpr, Types::TypeDecl*& type);
-        */
         
         // see pascal standard 6.8
         

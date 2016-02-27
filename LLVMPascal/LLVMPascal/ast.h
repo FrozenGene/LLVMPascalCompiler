@@ -31,7 +31,7 @@ namespace llvmpascal
     class ExprAST
     {
     public:
-        virtual      ~ExprAST() = default;
+        virtual     ~ExprAST() = default;
     };
 
     class ProgramAST : public ExprAST
