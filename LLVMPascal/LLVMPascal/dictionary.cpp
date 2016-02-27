@@ -77,6 +77,7 @@ namespace llvmpascal
         addToken("forward",      std::make_tuple(TokenValue::FORWARD,          TokenType::KEYWORDS,  -1));
         addToken("function",     std::make_tuple(TokenValue::FUNCTION,         TokenType::KEYWORDS,  -1));
         addToken("if",           std::make_tuple(TokenValue::IF,               TokenType::KEYWORDS,  -1));
+        addToken("nil",          std::make_tuple(TokenValue::NIL,              TokenType::KEYWORDS,  -1));
         addToken("goto",         std::make_tuple(TokenValue::GOTO,             TokenType::KEYWORDS,  -1));
         addToken("of",           std::make_tuple(TokenValue::OF,               TokenType::KEYWORDS,  -1));
         addToken("otherwise",    std::make_tuple(TokenValue::OTHERWISE,        TokenType::KEYWORDS,  -1));
@@ -142,5 +143,4 @@ namespace llvmpascal
 
         return false;
     }
-
 }

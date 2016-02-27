@@ -25,10 +25,10 @@ namespace llvmpascal
         // see pascal standard 6.4
 
         // in fact, we can put these 5 types to one category
-        // named constant. but I want to make it more cleaner.
+        // named constant. but I want to make it cleaner.
         INTEGER,        // such as 3, 4 and so on
         REAL,           // such as 3.14
-        BOOLEAN,        // true or false
+        BOOLEAN,        // true or false.
         CHAR,           // such as 'a','b'
         STRING_LITERAL, // such as 'hello world'
 
@@ -86,6 +86,7 @@ namespace llvmpascal
         FILE,
         SET,
         STRING,
+        NIL,
 
         // symbols
         LEFT_PAREN,        // (

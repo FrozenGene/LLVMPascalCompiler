@@ -76,20 +76,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ast.h" />
+    <ClInclude Include="constant.h" />
     <ClInclude Include="dictionary.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ast.cpp" />
+    <ClCompile Include="constant.cpp" />
     <ClCompile Include="dictionary.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="scanner.cpp" />
     <ClCompile Include="token.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="scanner_test.pas" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="program_test.pas" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

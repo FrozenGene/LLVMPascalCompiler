@@ -26,7 +26,8 @@ namespace llvmpascal
         explicit        Scanner(const std::string& srcFileName);
         Token           getToken() const;
         Token           getNextToken();
-        bool            getErrorFlag() const;
+        static bool     getErrorFlag();
+        static void     setErrorFlag(bool flag);
 
       private:
         void            getNextChar();
@@ -78,11 +79,11 @@ namespace llvmpascal
         long                column_;
         TokenLocation       loc_;
         char                currentChar_;
-        bool                errorFlag_;
         State               state_;
         Token               token_;
         Dictionary          dictionary_;
         std::string         buffer_;
+        static bool         errorFlag_;
 
     };
 
@@ -91,7 +92,7 @@ namespace llvmpascal
         return token_;
     }
 
-    inline bool Scanner::getErrorFlag() const
+    inline bool Scanner::getErrorFlag()
     {
         return errorFlag_;
     }

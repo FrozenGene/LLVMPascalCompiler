@@ -17,24 +17,24 @@
 #include "token.h"
 #include "dictionary.h"
 #include "scanner.h"
-
+#include "parser.h"
 using namespace llvmpascal;
 
 int main()
 {
-    Scanner scanner("scanner_test.pas");
+    Scanner scanner("program_test.pas");
+    //Scanner scanner("scanner_test.pas");
 
-    scanner.getNextToken();
+    //scanner.getNextToken();
 
-    while (scanner.getToken().getTokenType() != TokenType::END_OF_FILE)
-    {
-        if (scanner.getErrorFlag())
-        {
-            return 1;
-        }
-        scanner.getToken().dump();
-        scanner.getNextToken();
-    }
+    //while (scanner.getToken().getTokenType() != TokenType::END_OF_FILE)
+    //{
+    //    scanner.getToken().dump();
+    //    scanner.getNextToken();
+    //}
+    Parser parser(scanner);
+    parser.parse();
+    
 
     return 0;
 }

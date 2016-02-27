@@ -14,10 +14,12 @@
 #define ERROR_H_
 
 #include <string>
+#include <cassert>
 
 namespace llvmpascal
 {
     extern void errorToken(const std::string& msg);
+    extern void errorSyntax(const std::string& msg);
 }
 
 #endif // error.h

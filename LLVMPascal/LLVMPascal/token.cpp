@@ -67,47 +67,47 @@ namespace llvmpascal
         switch (type_)
         {
             case llvmpascal::TokenType::INTEGER:
-                buffer = "integer:        ";
+                buffer = "integer";
                 break;
 
             case llvmpascal::TokenType::REAL:
-                buffer = "real:           ";
+                buffer = "real";
                 break;
 
             case llvmpascal::TokenType::BOOLEAN:
-                buffer = "boolean:        ";
+                buffer = "boolean";
                 break;
 
             case llvmpascal::TokenType::CHAR:
-                buffer = "char:           ";
+                buffer = "char";
                 break;
 
             case llvmpascal::TokenType::STRING_LITERAL:
-                buffer = "string literal: ";
+                buffer = "string literal";
                 break;
 
             case llvmpascal::TokenType::IDENTIFIER:
-                buffer = "identifier:     ";
+                buffer = "identifier";
                 break;
 
             case llvmpascal::TokenType::KEYWORDS:
-                buffer = "keywords:       ";
+                buffer = "keywords";
                 break;
 
             case llvmpascal::TokenType::OPERATORS:
-                buffer = "operators:      ";
+                buffer = "operators";
                 break;
 
             case llvmpascal::TokenType::DELIMITER:
-                buffer = "delimiter:      ";
+                buffer = "delimiter";
                 break;
 
             case llvmpascal::TokenType::END_OF_FILE:
-                buffer = "eof             ";
+                buffer = "eof";
                 break;
 
             case llvmpascal::TokenType::UNKNOWN:
-                buffer = "unknown:        ";
+                buffer = "unknown";
                 break;
 
             default:
@@ -123,5 +123,4 @@ namespace llvmpascal
             << "\t" << name_ << "\t\t" << getSymbolPrecedence() << std::endl;
     }
     // End Token
-
 }

@@ -18,17 +18,17 @@
 
 namespace llvmpascal
 {
+    bool Scanner::errorFlag_ = false;
+
     Scanner::Scanner(const std::string& srcFileName)
         : fileName_(srcFileName), line_(1), column_(0),
-          currentChar_(0), errorFlag_(false),
-          state_(State::NONE)
+          currentChar_(0), state_(State::NONE)
     {
         input_.open(fileName_);
 
         if (input_.fail())
         {
             errorToken("When trying to open file " + fileName_ + ", occurred error.");
-            errorFlag_ = true;
         }
     }
 
@@ -135,7 +135,6 @@ namespace llvmpascal
                 if (input_.eof())
                 {
                     errorToken(getTokenLocation().toString() + "end of file happended in comment, *) is expected!, but find " + currentChar_);
-                    errorFlag_ = true;
                     break;
                 }
             }
@@ -163,7 +162,6 @@ namespace llvmpascal
                 if (input_.eof())
                 {
                     errorToken(getTokenLocation().toString() + "end of file happended in comment, } is expected!, but find " + currentChar_);
-                    errorFlag_ = true;
                     break;
                 }
             } while (currentChar_ != '}');
@@ -215,7 +213,6 @@ namespace llvmpascal
 
                 default:
                     errorToken("Match token state error.");
-                    errorFlag_ = true;
                     break;
             }
 
@@ -320,7 +317,6 @@ namespace llvmpascal
 
                 default:
                     errorToken("Match number state error.");
-                    errorFlag_ = true;
                     break;
             }
 
@@ -335,7 +331,6 @@ namespace llvmpascal
                 if (isFloat)
                 {
                     errorToken(getTokenLocation().toString() + "Fraction number can not have more than one dot.");
-                    errorFlag_ = true;
                 }
 
                 numberState = NumberState::FRACTION;
@@ -350,7 +345,7 @@ namespace llvmpascal
             }
         } while (numberState != NumberState::DONE);
 
-        if (!errorFlag_)
+        if (!getErrorFlag())
         {
             if (isFloat)
             {
@@ -500,7 +495,6 @@ namespace llvmpascal
         if (!readFlag)
         {
             errorToken(getTokenLocation().toString() + "Hexadecimal number format error.");
-            errorFlag_ = true;
         }
     }
 
@@ -518,7 +512,6 @@ namespace llvmpascal
         if (!std::isdigit(peekChar()))
         {
             errorToken(getTokenLocation().toString() + "Fraction number part should be numbers");
-            errorFlag_ = true;
         }
 
         // eat .
@@ -552,5 +545,8 @@ namespace llvmpascal
         }
     }
 
-
+    void Scanner::setErrorFlag(bool flag)
+    {
+        errorFlag_ = flag;
+    }
 }
