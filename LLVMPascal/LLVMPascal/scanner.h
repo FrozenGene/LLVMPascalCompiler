@@ -14,6 +14,7 @@
 #define SCANNER_H_
 
 #include <fstream>
+#include <string>
 #include "token.h"
 #include "dictionary.h"
 
@@ -60,6 +61,7 @@ namespace llvmpascal
         void            handleXDigit();
         void            handleFraction();
         void            handleExponent();
+        void            errorReport(const std::string& msg);
 
       public:
         enum class State
