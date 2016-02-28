@@ -13,6 +13,15 @@
 
 namespace llvmpascal
 {
-    ProgramAST::ProgramAST(const std::string& programName) : programName_(programName)
+    ExprAST::ExprAST(const TokenLocation& loc) 
+        : loc_(loc)
+    {}
+
+    ProgramAST::ProgramAST(const TokenLocation& loc, const std::string& programName)
+        : ExprAST(loc), programName_(programName)
+    {}
+
+    IfStatementAST::IfStatementAST(const TokenLocation& loc, ExprASTPtr condition, ExprASTPtr thenPart, ExprASTPtr elsePart)
+        : ExprAST(loc), condition_(std::move(condition)), thenPart_(std::move(thenPart)), elsePart_(std::move(elsePart))
     {}
 }

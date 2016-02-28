@@ -88,7 +88,7 @@ namespace llvmpascal
 
         if (scanner_.getToken().getTokenType() == TokenType::END_OF_FILE)
         {
-            errorSyntax("Unexpected end of file.");
+            errorReport("Unexpected end of file.");
             ast_.clear();
             return ast_;
         }
@@ -192,6 +192,8 @@ namespace llvmpascal
 
     ExprASTPtr Parser::parseProgramStatement()
     {
+        TokenLocation loc = scanner_.getToken().getTokenLocation();
+
         if (!expectToken(TokenValue::PROGRAM, "program", true))
         {
             return nullptr;
@@ -220,9 +222,6 @@ namespace llvmpascal
                     return nullptr;
                 }
 
-                // Only two condition:
-                // 1. ( identifier )
-                // 2. ( identifer , [, identifier ... ] )
                 if (!validateToken(TokenValue::RIGHT_PAREN, false))
                 {
                     if (!expectToken(TokenValue::COMMA, ",", true))
@@ -240,7 +239,7 @@ namespace llvmpascal
             return nullptr;
         }
 
-        return std::make_unique<ProgramAST>(programName);
+        return std::make_unique<ProgramAST>(loc, programName);
     }
 
     BlockASTPtr Parser::parseBlockStatement()
@@ -277,16 +276,18 @@ namespace llvmpascal
     //          | character-string
     
     /*
-       For example:
+       [Example]
+
        const
            name = 'Blue';
            year = 2016;
            pi = 3.14159;
+
+       [/Example]
            
     */
     void Parser::parseConstantDefinition()
     {
-        // make sure token is const keyword and advance to next token
         if (!expectToken(TokenValue::CONST, "const", true))
         {
             return;
@@ -294,16 +295,13 @@ namespace llvmpascal
 
         do 
         {
-            // make sure token is identifier type, but do not advance to next token
             if (!expectToken(TokenType::IDENTIFIER, "identifier", false))
             {
                 return;
             }
 
-            // get the identifier name and add it to symbol table.
             std::string constIdentifierName = scanner_.getToken().getTokenName();
 
-            // eat identifier and advance to next token
             scanner_.getNextToken();
 
             if (!expectToken(TokenValue::EQUAL, "=", true))
@@ -311,7 +309,6 @@ namespace llvmpascal
                 return;
             }
 
-            // we must "compute" the expression to recognize constant
             ConstantDeclPtr constValue = parseConstantExpression();
 
             // DEBUG: constant value output
@@ -335,13 +332,16 @@ namespace llvmpascal
     {
         ConstantDeclPtr constDeclPtr = nullptr;
         TokenLocation tokenLocation = scanner_.getToken().getTokenLocation();
+
         // '+' / '-'
         // if it is '+', the value will be 1
         // if it is '-', the value will be -1
         int numberSign = 1;
+
         // for char type check
         bool hasNumberSign = false;
-        // some type can have logic operator NOT
+
+        // some types can have logic operator NOT
         bool notOpFlag = false;
 
         do
@@ -412,7 +412,7 @@ namespace llvmpascal
                 {
                     if (notOpFlag)
                     {
-                        errorSyntax("'NOT' can not be used in the real constants");
+                        errorReport("'NOT' can not be used in the real constants");
                         return nullptr;
                     }
 
@@ -425,7 +425,7 @@ namespace llvmpascal
                 {
                     if (hasNumberSign)
                     {
-                        errorSyntax("'+' or '-'  can not be uses in the char constants");
+                        errorReport("'+' or '-'  can not be uses in the char constants");
                         return nullptr;
                     }
 
@@ -444,7 +444,7 @@ namespace llvmpascal
                 {
                     if (hasNumberSign)
                     {
-                        errorSyntax("'+' or '-'  can not be uses in the string literial");
+                        errorReport("'+' or '-'  can not be uses in the string literial");
                         return nullptr;
                     }
 
@@ -570,11 +570,77 @@ namespace llvmpascal
         return nullptr;
     }
 
+    /*
+    see pascal standard 6 .8.3 .4
+    If-statements
+    
+    if-statement = 'if' Boolean-expression 'then' statement [ else-part ]
+    else-part = 'else' statement
+
+    [Example]
+        
+        if x < 1 .5 then z := x + y else z := 1 .5
+        
+        if p1 <> nil then p1 := p1
+
+        if j = 0 then
+            if i = 0 then writeln( ' indefinite ' )
+            else writeln( ' infinite ' )
+        else writeln( i / j )
+
+    [/Example]
+    */
+
     ExprASTPtr Parser::parseIfStatement()
     {
-        // TODO:
-        assert(0 && "I have not implemented parseIfStatement.");
-        return nullptr;
+        // if we do it very well, we can get token if location,
+        // token then location, token else token location like Clang.
+        // but here we just get token if location for simplicity.
+        // so, if you want to do better, just like Clang implementation.
+        // I think it should not be difficult.
+        TokenLocation loc = scanner_.getToken().getTokenLocation();
+
+        // current token is keyword if.
+        if (!expectToken(TokenValue::IF, "if", true))
+        {
+            return nullptr;
+        }
+        
+        auto condition = parseExpression();
+
+        if (!condition)
+        {
+            errorReport("if condition is not valid.");
+            return nullptr;
+        }
+
+        if (!expectToken(TokenValue::THEN, "then", true))
+        {
+            return nullptr;
+        }
+
+        ExprASTPtr thenPart = parseBlockOrStatement();
+
+        if (!thenPart)
+        {
+            errorReport("then statement is not valid.");
+            return nullptr;
+        }
+
+        ExprASTPtr elsePart = nullptr;
+
+        // if we have token else.
+        if (validateToken(TokenValue::ELSE, true))
+        {
+            elsePart = parseBlockOrStatement();
+            if (!elsePart)
+            {
+                errorReport("else statement is not valid.");
+                return nullptr;
+            }
+        }
+
+        return std::make_unique<IfStatementAST>(loc, std::move(condition), std::move(thenPart), std::move(elsePart));
     }
 
     ExprASTPtr Parser::parseWhileStatement()
@@ -598,14 +664,20 @@ namespace llvmpascal
         return nullptr;
     }
 
+    ExprASTPtr Parser::parseBlockOrStatement()
+    {
+        // TODO:
+        assert(0 && "I have not implemented parseBlockOrStatement.");
+        return nullptr;
+    }
+
     // Helper Functions.
 
     bool Parser::expectToken(TokenValue value, const std::string& tokenName, bool advanceToNextToken)
     {
         if (scanner_.getToken().getTokenValue() != value)
         {
-            errorSyntax(scanner_.getToken().getTokenLocation().toString() + "Expected ' " + tokenName + " ', but find "
-                + scanner_.getToken().getTokenName());
+            errorReport("Expected ' " + tokenName + " ', but find " + scanner_.getToken().getTokenName());
             return false;
         }
 
@@ -621,8 +693,7 @@ namespace llvmpascal
     {
         if (scanner_.getToken().getTokenType() != type)
         {
-            errorSyntax(scanner_.getToken().getTokenLocation().toString() + "Expected ' " + tokenTypeDescription + " ', but find "
-                + scanner_.getToken().tokenTypeDescription() + " " + scanner_.getToken().getTokenName());
+            errorReport("Expected ' " + tokenTypeDescription + " ', but find " + scanner_.getToken().tokenTypeDescription() + " " + scanner_.getToken().getTokenName());
             return false;
         }
 
@@ -676,5 +747,10 @@ namespace llvmpascal
         }
 
         return true;
+    }
+
+    void Parser::errorReport(const std::string& msg)
+    {
+        errorSyntax(scanner_.getToken().getTokenLocation().toString() + msg);
     }
 }

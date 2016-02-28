@@ -21,13 +21,7 @@
 
 namespace llvmpascal
 {
-    using VecExprASTPtr = std::vector <std::unique_ptr<ExprAST>>;
-    using ExprASTPtr = std::unique_ptr <ExprAST>;
-    using VarExprASTPtr = std::unique_ptr <VariableAST>;
-    using BlockASTPtr = std::unique_ptr <BlockAST>;
-    using PrototypeASTPtr = std::unique_ptr <PrototypeAST>;
-    using FunctionASTPtr = std::unique_ptr <FunctionAST>;
-    using VarDeclASTPtr = std::unique_ptr <VariableDeclarationAST>;
+    // others XXXPtr* such as ExprASTPtr) are located in the ast.h
     using ConstantDeclPtr = std::unique_ptr <Constant>;
 
     class Parser
@@ -49,7 +43,7 @@ namespace llvmpascal
         ExprASTPtr            parseUnaryOp();
         ExprASTPtr            parseIdentifierExpr();
         ExprASTPtr            parseParenExpr();
-        ExprASTPtr            parseSetExpr();
+        
 
         // parse different type expressions.
         // they are also very like parseNumber function in the llvm tutorial,
@@ -59,8 +53,9 @@ namespace llvmpascal
         ExprASTPtr            parseCharExpr(Token token);
         ExprASTPtr            parseStringExpr(Token token);
 
-        // leave set, array, filed, pointer type expression to implementation.
-        
+        // set, array, filed, pointer type expression to implementation.
+        ExprASTPtr            parseSetExpr();
+
         // see pascal standard 6.8
         
         // note: assignment statement implementation will be included parseStatement.
@@ -73,7 +68,7 @@ namespace llvmpascal
         ExprASTPtr            parseWithStatement();
         ExprASTPtr            parseProgramStatement();
 
-        ExprASTPtr            parseGotoStatement(){/* TODO: Maybe I will not implement it */}
+        ExprASTPtr            parseGotoStatement();// TODO: Maybe I will not implement it.
 
         BlockASTPtr           parseBlockStatement(); // begin...end
         ExprASTPtr            parseBlockOrStatement(); // if not begin
@@ -103,6 +98,7 @@ namespace llvmpascal
         bool                  expectToken(TokenType type, const std::string& tokenTypeDescription, bool advanceToNextToken);
         bool                  validateToken(TokenValue value, bool advanceToNextToken);
         bool                  validateToken(TokenType type, bool advanceToNextToken);
+        void                  errorReport(const std::string& msg);
     private:
         Scanner&              scanner_;
         VecExprASTPtr         ast_;

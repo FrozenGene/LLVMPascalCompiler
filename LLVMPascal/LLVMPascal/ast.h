@@ -14,6 +14,9 @@
 #define AST_H_
 
 #include <string>
+#include <vector>
+#include <memory>
+#include "token.h"
 
 namespace llvmpascal
 {
@@ -26,21 +29,42 @@ namespace llvmpascal
     // see the link: http://llvm.org/docs/tutorial/LangImpl2.html
     
     // base class. I will consider to use llvm style rtti rather than C++ standard rtti
-    // to interect LLVM API more smoothly. (MAYBE, not decided now.)
+    // to intereact with LLVM API more smoothly. (MAYBE, not decided now.)
     // see the link: http://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html
+
+    class ExprAST;
+    class VariableAST;
+    class BlockAST;
+    class PrototypeAST;
+    class FunctionAST;
+    class VariableDeclarationAST;
+
+    using VecExprASTPtr = std::vector <std::unique_ptr<ExprAST>>;
+    using ExprASTPtr = std::unique_ptr <ExprAST>;
+    using VarExprASTPtr = std::unique_ptr <VariableAST>;
+    using BlockASTPtr = std::unique_ptr <BlockAST>;
+    using PrototypeASTPtr = std::unique_ptr <PrototypeAST>;
+    using FunctionASTPtr = std::unique_ptr <FunctionAST>;
+    using VarDeclASTPtr = std::unique_ptr <VariableDeclarationAST>;
+
     class ExprAST
     {
     public:
-        virtual     ~ExprAST() = default;
+        ExprAST(const TokenLocation& loc);
+        virtual       ~ExprAST() = default;
+
+    private:
+        TokenLocation loc_;
+
     };
 
     class ProgramAST : public ExprAST
     {
     public:
-        explicit    ProgramAST(const std::string& programName);
+        explicit      ProgramAST(const TokenLocation& loc, const std::string& programName);
 
     private:
-        std::string programName_;
+        std::string   programName_;
     };
 
     class VariableAST : public ExprAST
@@ -67,6 +91,19 @@ namespace llvmpascal
     {
 
     };
+
+    class IfStatementAST : public ExprAST
+    {
+    public:
+        IfStatementAST(const TokenLocation& loc, ExprASTPtr condition, ExprASTPtr thenPart, ExprASTPtr elsePart);
+
+    private:
+        ExprASTPtr    condition_;
+        ExprASTPtr    thenPart_;
+        ExprASTPtr    elsePart_;
+    };
+
+
 
 }
 
