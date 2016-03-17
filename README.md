@@ -5,15 +5,24 @@ This is the source code of My LLVM Pascal Compiler Tutorial. You can click [this
 
 This project will implement almost all ISO Pascal 90 syntax and can work on Windows, Linux and Mac OS X.
 
+ISO Pascal 90 Doc address (pdf file): [Pascal 90](http://www.pascal-central.com/docs/iso7185.pdf)
+
 Current Status:
 ==================
-Scanner.  100%.    
+Scanner.  100%.   
 
-Parser.   Working...
+Parser.   Working... (Complete parser framework but have many detail work to do)
 
 Semantic. Working...
 
 
+Test Status:
+==================
+Very very little. Maybe I need more test from you. Welcome any issues you find.
+
+Continuous Integration Status:
+==================
+I have not done this work. I will consider [travis ci](https://travis-ci.org/), which is a nice and popular CI tool in the GitHub.
 
 Compile and Run
 ==================
