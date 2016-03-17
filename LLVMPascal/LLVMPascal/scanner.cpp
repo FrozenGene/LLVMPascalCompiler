@@ -266,6 +266,7 @@ namespace llvmpascal
         loc_ = getTokenLocation();
         bool matched = false;
         bool isFloat = false;
+        bool isExponent = false;
         int numberBase = 10;
 
         if (currentChar_ == '$')
@@ -309,7 +310,7 @@ namespace llvmpascal
 
                 case NumberState::EXPONENT:
                     handleExponent();
-                    isFloat = true;
+                    isExponent = true;
                     break;
 
                 case NumberState::DONE:
@@ -333,10 +334,25 @@ namespace llvmpascal
                     errorReport("Fraction number can not have more than one dot.");
                 }
 
+                if (isExponent)
+                {
+                    errorReport("Scientist number representation in Pascal can not have dot.");
+                }
+
+                if (numberBase == 16)
+                {
+                    errorReport("Hexadecimal number in Pascal can only be integer.");
+                }
+
                 numberState = NumberState::FRACTION;
             }
             else if (currentChar_ == 'E' || currentChar_ == 'e')
             {
+                if (isExponent)
+                {
+                    errorReport("Scientist presentation can not have more than one e / E");
+                }
+
                 numberState = NumberState::EXPONENT;
             }
             else
@@ -347,7 +363,7 @@ namespace llvmpascal
 
         if (!getErrorFlag())
         {
-            if (isFloat)
+            if (isFloat || isExponent)
             {
                 makeToken(TokenType::REAL, TokenValue::UNRESERVED, loc_,
                     std::stod(buffer_), buffer_);
@@ -531,6 +547,12 @@ namespace llvmpascal
         addToBuffer(currentChar_);
         getNextChar();
 
+        // next char will be [sign] | digital-sequence
+        if (currentChar_ != '+' && currentChar_ != '-' && !std::isdigit(currentChar_))
+        {
+            errorReport(std::string("Scientist presentation number after e / E should be + / - or digits but find ") + '\'' + currentChar_ + '\'');
+        }
+
         // if number has +/-
         if (currentChar_ == '+' || currentChar_ == '-')
         {
@@ -538,6 +560,7 @@ namespace llvmpascal
             getNextChar();
         }
 
+        // next will only be digits
         while (std::isdigit(currentChar_))
         {
             addToBuffer(currentChar_);
