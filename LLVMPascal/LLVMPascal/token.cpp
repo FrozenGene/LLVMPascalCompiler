@@ -45,19 +45,19 @@ namespace llvmpascal
     Token::Token(TokenType type, TokenValue value, const TokenLocation& location,
                  const std::string& strValue, std::string name)
         : type_(type), value_(value), location_(location),
-          strValue_(strValue), name_(name), symbolPrecedence_(-1)
+          name_(name), symbolPrecedence_(-1), strValue_(strValue)
     {}
 
     Token::Token(TokenType type, TokenValue value, const TokenLocation& location,
                  long intValue, std::string name)
         : type_(type), value_(value), location_(location),
-          intValue_(intValue), name_(name), symbolPrecedence_(-1)
+          name_(name), symbolPrecedence_(-1), intValue_(intValue)
     {}
 
     Token::Token(TokenType type, TokenValue value, const TokenLocation& location,
                  double realValue, std::string name)
         : type_(type), value_(value), location_(location),
-          realValue_(realValue), name_(name), symbolPrecedence_(-1)
+          name_(name), symbolPrecedence_(-1), realValue_(realValue)
     {}
 
     std::string Token::tokenTypeDescription() const

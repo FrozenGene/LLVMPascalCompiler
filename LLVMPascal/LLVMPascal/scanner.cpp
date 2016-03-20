@@ -134,7 +134,7 @@ namespace llvmpascal
                 // accident EOF
                 if (input_.eof())
                 {
-                    errorReport("end of file happended in comment, *) is expected!, but find " + currentChar_);
+                    errorReport(std::string("end of file happended in comment, *) is expected!, but find ") + currentChar_);
                     break;
                 }
             }
@@ -161,7 +161,7 @@ namespace llvmpascal
 
                 if (input_.eof())
                 {
-                    errorReport("end of file happended in comment, } is expected!, but find " + currentChar_);
+                    errorReport(std::string("end of file happended in comment, } is expected!, but find ") + currentChar_);
                     break;
                 }
             } while (currentChar_ != '}');
@@ -264,7 +264,6 @@ namespace llvmpascal
     void Scanner::handleNumberState()
     {
         loc_ = getTokenLocation();
-        bool matched = false;
         bool isFloat = false;
         bool isExponent = false;
         int numberBase = 10;

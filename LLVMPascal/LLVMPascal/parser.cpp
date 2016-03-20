@@ -545,6 +545,23 @@ namespace llvmpascal
                 }
             }
 
+            default:
+            {
+                // TODO:
+                std::string delimiter = "\n";
+                std::string msgPrefix = "Sorry, I have not completed parser work. But if you can see it during test program_test.pas, if you can see this:";
+                std::string msg = R"(
+                                     Real Constant: 1.245e+09
+                                     Integer Constant : 2016
+                                     String Constant : Blue
+                                     )";
+                std::string msgPostfix = "Congradulations, everything is ok!";
+
+                std::cerr << msgPrefix + delimiter + msg + delimiter + msgPostfix << std::endl;
+
+                assert(0 && "Sorry again, I have not completed parser work, I will do it soon.");
+            }
+
         }
 
         return nullptr;

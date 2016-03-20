@@ -177,8 +177,9 @@ namespace llvmpascal
         TokenType       type_;
         TokenValue      value_;
         TokenLocation   location_;
-        int             symbolPrecedence_;
         std::string     name_;
+        int             symbolPrecedence_;
+        
 
         // const values of token
         long            intValue_;
