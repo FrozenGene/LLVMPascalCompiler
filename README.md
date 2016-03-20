@@ -47,7 +47,7 @@ Additionally, I have tested it successfully in the Mac OS X environment using GC
 
 Maybe this can work under lower version of CMake, GCC , Clang, but I can not make sure.
 
-If you find some problem, welcome any issue.
+If you find any problem, welcome to raise issue :-)
 
 
 License
