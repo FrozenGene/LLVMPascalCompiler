@@ -451,7 +451,6 @@ namespace llvmpascal
     void Scanner::handleOperationState()
     {
         loc_ = getTokenLocation();
-        bool matched = false;
         // add current symbol char
         addToBuffer(currentChar_);
         // add next one symbol char
@@ -459,7 +458,6 @@ namespace llvmpascal
 
         if (dictionary_.haveToken(buffer_))
         {
-            matched = true;
             getNextChar();
         }
         else
