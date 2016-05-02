@@ -13,7 +13,7 @@
 
 namespace llvmpascal
 {
-    ExprAST::ExprAST(const TokenLocation& loc) 
+    ExprAST::ExprAST(const TokenLocation& loc)
         : loc_(loc)
     {}
 
@@ -23,5 +23,15 @@ namespace llvmpascal
 
     IfStatementAST::IfStatementAST(const TokenLocation& loc, ExprASTPtr condition, ExprASTPtr thenPart, ExprASTPtr elsePart)
         : ExprAST(loc), condition_(std::move(condition)), thenPart_(std::move(thenPart)), elsePart_(std::move(elsePart))
+    {}
+
+    WhileStatementAST::WhileStatementAST(const TokenLocation& loc, ExprASTPtr condition, ExprASTPtr body)
+        : ExprAST(loc), condition_(std::move(condition)), body_(std::move(body))
+    {}
+
+    ForStatementAST::ForStatementAST(const TokenLocation& loc, const std::string& controlVariable,
+        ExprASTPtr startExpr, ExprASTPtr endExpr, bool downOrder, ExprASTPtr body)
+        : ExprAST(loc), controlVariable_(controlVariable), startExpr_(std::move(startExpr)),
+        endExpr_(std::move(endExpr)), downOrder_(downOrder), body_(std::move(body))
     {}
 }

@@ -521,6 +521,9 @@ namespace llvmpascal
                     case TokenValue::IF:
                         return parseIfStatement();
 
+                    case TokenValue::FOR:
+                        return parseForStatement();
+
                     case TokenValue::WHILE:
                         return parseWhileStatement();
                     // TODO:
@@ -659,12 +662,117 @@ namespace llvmpascal
 
         return std::make_unique<IfStatementAST>(loc, std::move(condition), std::move(thenPart), std::move(elsePart));
     }
+    
+    // 6.8.3.9 For-statements
+    // for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) 
+    //                  final-value 'do' statement
+    //
+    // control-variable = entire-variable
+    // initial-value = expression
+    // fi nal-value = expression
+    
+    // for v := e1 to | downto e2 do body
+    ExprASTPtr Parser::parseForStatement()
+    {
+        TokenLocation loc = scanner_.getToken().getTokenLocation();
 
+        if(!expectToken(TokenValue::FOR, "for", true))
+        {
+            return nullptr;
+        }
+
+        if(!validateToken(TokenType::IDENTIFIER, false))
+        {
+            errorReport("For statement control varible expected identifier type but find " + scanner_.getToken().toString());
+            return nullptr;
+        }
+
+        auto controlVariable = scanner_.getToken().getIdentifierName();
+
+        if(!expectToken(TokenValue::ASSIGN, ":=", true))
+        {
+            return nullptr;
+        }
+
+        auto startExpr = parseExpression();
+
+        if(!startExpr)
+        {
+            return nullptr;
+        }
+
+        bool downOrder = false;
+
+        if (validateToken(TokenValue::TO, false) ||
+            validateToken(TokenValue::DOWNTO, false))
+        {
+            if (scanner_.getToken().getTokenValue() == TokenValue::DOWNTO)
+            {
+                downOrder = true;
+            }
+            scanner_.getNextToken();
+        }
+        else
+        {
+            errorReport("Expected to / downto keyword, but find " + scanner_.getToken().toString());
+            return nullptr;
+        }
+
+        auto endExpr = parseExpression();
+        
+        if(!endExpr)
+        {
+            return nullptr;
+        }
+
+        if(!expectToken(TokenValue::DO, "do", true))
+        {
+            return nullptr;
+        }
+
+        auto body = parseBlockOrStatement();
+        
+        if(!body)
+        {
+            return nullptr;
+        }
+
+        return std::make_unique<ForStatementAST>(loc, controlVariable,
+            std::move(startExpr), std::move(endExpr), downOrder, std::move(body));
+        
+    }
+
+    // 6.8.3.8: While-statements
+    // while-statement = 'while' Boolean-expression 'do' statement
     ExprASTPtr Parser::parseWhileStatement()
     {
-        // TODO:
-        assert(0 && "I have not implemented parseIfStatement.");
-        return nullptr;
+        TokenLocation loc = scanner_.getToken().getTokenLocation();
+
+        if(!expectToken(TokenValue::WHILE, "while", true))
+        {
+            return nullptr;
+        }
+
+        auto condition = parseExpression();
+
+        if(!condition)
+        {
+            return nullptr;
+        }
+
+        if(!expectToken(TokenValue::DO, "do", true))
+        {
+            return nullptr;
+        }
+
+        auto body = parseBlockOrStatement();
+
+        if(!body)
+        {
+            return nullptr;
+        }
+
+        return std::make_unique<WhileStatementAST>(loc, std::move(condition), std::move(body));
     }
 
     ExprASTPtr Parser::parseParenExpr()

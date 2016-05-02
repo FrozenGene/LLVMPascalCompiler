@@ -17,6 +17,7 @@
 #include <iostream>
 #include <tuple>
 #include <map>
+#include <cassert>
 
 namespace llvmpascal
 {
@@ -169,6 +170,9 @@ namespace llvmpascal
         // but now, we use it directly.
         void dump(std::ostream& out = std::cout) const;
 
+        // more exact function for getting identifier name.
+        // Its essential heart is just getTokenName.
+        std::string getIdentifierName() const;
 
         std::string tokenTypeDescription() const;
         std::string toString() const;
@@ -227,6 +231,12 @@ namespace llvmpascal
     inline int Token::getSymbolPrecedence() const
     {
         return symbolPrecedence_;
+    }
+
+    inline std::string Token::getIdentifierName() const
+    {
+        assert(type_ == TokenType::IDENTIFIER && "Token type should be identifier.");
+        return name_;
     }
 }
 

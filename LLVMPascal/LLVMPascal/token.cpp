@@ -117,10 +117,15 @@ namespace llvmpascal
         return buffer;
     }
 
+    std::string Token::toString() const
+    {
+    }
+
     void Token::dump(std::ostream& out /* = std::cout */) const
     {
         out << location_.toString() << "\t" << tokenTypeDescription()
             << "\t" << name_ << "\t\t" << getSymbolPrecedence() << std::endl;
     }
+
     // End Token
 }

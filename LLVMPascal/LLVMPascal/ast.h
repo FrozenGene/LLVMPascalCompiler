@@ -103,6 +103,32 @@ namespace llvmpascal
         ExprASTPtr    elsePart_;
     };
 
+    class WhileStatementAST : public ExprAST
+    {
+    public:
+        WhileStatementAST(const TokenLocation& loc, ExprASTPtr condition, ExprASTPtr body);
+
+    private:
+        ExprASTPtr   condition_;
+        ExprASTPtr   body_;
+
+    };
+
+    class ForStatementAST : public ExprAST
+    {
+    public:
+        ForStatementAST(const TokenLocation& loc, const std::string& controlVariable, ExprASTPtr startExpr, ExprASTPtr endExpr,
+            bool downOrder, ExprASTPtr body);
+
+    private:
+        std::string controlVariable_;
+        ExprASTPtr  startExpr_;
+        ExprASTPtr  endExpr_;
+        bool        downOrder_;
+        ExprASTPtr  body_;
+
+    };
+
 
 
 }
