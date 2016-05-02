@@ -119,6 +119,7 @@ namespace llvmpascal
 
     std::string Token::toString() const
     {
+        return std::string("Token Type: " + tokenTypeDescription() + "Token Name: " + name_);
     }
 
     void Token::dump(std::ostream& out /* = std::cout */) const
