@@ -470,7 +470,7 @@ namespace llvmpascal
             if (!validateToken(TokenValue::SEMICOLON, false) &&
                 !validateToken(TokenValue::RIGHT_PAREN, false))
             {
-                assert(0 && "Does not support now. Shoudl parse right op");
+                assert(0 && "Does not support now. Should parse right op");
                 // TODO:
                 // constDeclPtr = parseConstRhs(precedence, constDeclPtr);
             }
@@ -526,10 +526,16 @@ namespace llvmpascal
 
                     case TokenValue::WHILE:
                         return parseWhileStatement();
+
+                    case TokenValue::REPEAT:
+                        return parseRepeatStatement();
+
+                    case TokenValue::CASE:
+                        return parseCaseStatement();
                     // TODO:
                     // many others...
                     default:
-                        assert(0 && "I have not complete parsePrimary part");
+                        assert(0 && "I have not completed parsePrimary part");
                 }
             }
 
@@ -662,6 +668,33 @@ namespace llvmpascal
 
         return std::make_unique<IfStatementAST>(loc, std::move(condition), std::move(thenPart), std::move(elsePart));
     }
+
+    // 6.8.3.5 Case-statements
+    // case-statement = 'case' case-index 'of' case-list-element
+    //                  {' ;' case-list-element} [';'] 'end'
+    //case-list-element = case-constant-list ':' statement
+    //case-index = expression
+
+    // For example
+    /*
+    
+    [Example]
+
+    case operator of
+         plus : x := x + y;
+         minus : x := x - y;
+         times : x := x * y
+    end
+
+    [/Example]
+    
+    */
+    ExprASTPtr Parser::parseCaseStatement()
+    {
+        // TODO:
+        assert(0 && "I have not implemented parseCaseStatement.");
+        return nullptr;
+    }
     
     // 6.8.3.9 For-statements
     // for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) 
@@ -775,6 +808,68 @@ namespace llvmpascal
         return std::make_unique<WhileStatementAST>(loc, std::move(condition), std::move(body));
     }
 
+    // 6.8.3.7: Repeate-statements
+    // repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression
+    /*
+    [Example]
+
+      repeat
+         stmt1;
+         stmt2;
+         stmt3
+      until Boolean-expression
+
+     [/Example]
+    */
+    // My implementation thought is push these statements(stmt1, stmt2, stmt3...) as
+    // one block scope statement(i.e. begin stm1, stmt2, stm3... end).
+    ExprASTPtr Parser::parseRepeatStatement()
+    {
+        TokenLocation loc = scanner_.getToken().getTokenLocation();
+
+        if(!expectToken(TokenValue::REPEAT, "repeat", true))
+        {
+            return nullptr;
+        }
+
+        TokenLocation nestedLoc = scanner_.getToken().getTokenLocation();
+        VecExprASTPtr nestedStmts;
+        while(!validateToken(TokenValue::UNTIL, true))
+        {
+            auto stmt = parseBlockOrStatement();
+
+            if(!stmt)
+            {
+                return nullptr;
+            }
+
+            nestedStmts.push_back(std::move(stmt));
+
+            // if current token is not keyword 'until', it should be semicolon.
+            // because the last stmt could have not semicolon(also can have), but
+            // others must have.
+            // if current token is keyword 'until', forward it(not eat it) to
+            // while condition and break current loop.
+            if(!validateToken(TokenValue::UNTIL, false))
+            {
+                if (!expectToken(TokenValue::SEMICOLON, ";", true))
+                {
+                    return nullptr;
+                }
+            }
+        }
+
+        auto condition = parseExpression();
+
+        if(!condition)
+        {
+            return nullptr;
+        }
+
+        return std::make_unique<RepeatStatementAST>(loc, std::move(condition), std::make_unique<BlockAST>(nestedLoc, nestedStmts));
+    }
+
+
     ExprASTPtr Parser::parseParenExpr()
     {
         // TODO:
@@ -792,6 +887,7 @@ namespace llvmpascal
     ExprASTPtr Parser::parseBlockOrStatement()
     {
         // TODO:
+        // The highest priority.
         assert(0 && "I have not implemented parseBlockOrStatement.");
         return nullptr;
     }

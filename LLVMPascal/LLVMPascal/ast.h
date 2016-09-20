@@ -74,7 +74,11 @@ namespace llvmpascal
 
     class BlockAST : public ExprAST
     {
+    public:
+        BlockAST(const TokenLocation& loc, const VecExprASTPtr& body);
 
+    private:
+        const VecExprASTPtr& body_;
     };
 
     class FunctionAST : public ExprAST
@@ -126,6 +130,17 @@ namespace llvmpascal
         ExprASTPtr  endExpr_;
         bool        downOrder_;
         ExprASTPtr  body_;
+
+    };
+
+    class RepeatStatementAST : public ExprAST
+    {
+    public:
+        RepeatStatementAST(const TokenLocation& loc, ExprASTPtr condition, BlockASTPtr body);
+
+    private:
+        ExprASTPtr condition_;
+        BlockASTPtr body_;
 
     };
 
