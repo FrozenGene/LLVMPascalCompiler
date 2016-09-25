@@ -43,4 +43,7 @@ namespace llvmpascal
         : ExprAST(loc), condition_(std::move(condition)), body_(std::move(body))
     {}
 
+    AssignStatementAST::AssignStatementAST(const TokenLocation& loc, ExprASTPtr lhs, ExprASTPtr rhs)
+        : ExprAST(loc), lhs_(std::move(lhs)), rhs_(std::move(rhs))
+    {}
 }

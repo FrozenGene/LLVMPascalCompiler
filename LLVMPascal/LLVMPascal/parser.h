@@ -34,27 +34,27 @@ namespace llvmpascal
 
     private:
         // parseExpression, parsePrimary, parseBinOpRHS and parseUnaryOp,
-        // parseIdentifierExpr, parseParenExpr functions are just like 
+        // parseIdentifierExpression, parseParenExpression functions are just like 
         // llvm kaleidoscope tutorial 02
         // see the link: http://llvm.org/docs/tutorial/LangImpl2.html
         ExprASTPtr            parseExpression();
         ExprASTPtr            parsePrimary();
         ExprASTPtr            parseBinOpRHS(int precedence, ExprASTPtr lhs);
         ExprASTPtr            parseUnaryOp();
-        ExprASTPtr            parseIdentifierExpr();
-        ExprASTPtr            parseParenExpr();
+        ExprASTPtr            parseIdentifierExpression();
+        ExprASTPtr            parseParenExpression();
         
 
         // parse different type expressions.
         // they are also very like parseNumber function in the llvm tutorial,
         // but they are more complex
-        ExprASTPtr            parseRealExpr(Token token);
-        ExprASTPtr            parseIntegerExpr(Token token);
-        ExprASTPtr            parseCharExpr(Token token);
-        ExprASTPtr            parseStringExpr(Token token);
+        ExprASTPtr            parseRealExpression(Token token);
+        ExprASTPtr            parseIntegerExpression(Token token);
+        ExprASTPtr            parseCharExpression(Token token);
+        ExprASTPtr            parseStringExpression(Token token);
 
         // set, array, filed, pointer type expression to implementation.
-        ExprASTPtr            parseSetExpr();
+        ExprASTPtr            parseSetExpression();
 
         // see pascal standard 6.8
         

@@ -144,6 +144,18 @@ namespace llvmpascal
 
     };
 
+    class AssignStatementAST : public ExprAST
+    {
+    public:
+        AssignStatementAST(const TokenLocation& loc, ExprASTPtr lhs, ExprASTPtr rhs);
+
+    private:
+        ExprASTPtr lhs_;
+        ExprASTPtr rhs_;
+    };
+
+    
+
 
 
 }

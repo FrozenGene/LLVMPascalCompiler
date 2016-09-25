@@ -94,7 +94,7 @@ namespace llvmpascal
         }
 
         // TODO: input, output variable declaration. They will be text type
-        // according to Pascal standard (but I have not add type system now, just 
+        // according to Pascal standard (but I have not added type system now, just 
         // leave here).
         // 
         // The original quote:
@@ -244,9 +244,38 @@ namespace llvmpascal
 
     BlockASTPtr Parser::parseBlockStatement()
     {
-        // TODO
-        assert(0 && "I have not implemented parseBlockStatement.");
-        return nullptr;
+        auto loc = scanner_.getToken().getTokenLocation();
+
+        if(!expectToken(TokenValue::BEGIN , "begin", true))
+        {
+            return nullptr;
+        }
+
+        VecExprASTPtr stmts;
+
+        while(!validateToken(TokenValue::END, false))
+        {
+            if(auto stmt = parseStatement())
+            {
+                stmts.push_back(std::move(stmt));
+
+                if (!expectToken(TokenValue::SEMICOLON, ";", true) || !expectToken(TokenValue::END, "end", true))
+                {
+                    return nullptr;
+                }
+            }
+            else
+            {
+                return nullptr;
+            }
+        }
+        
+        if(!expectToken(TokenValue::END, "end", true))
+        {
+            return nullptr;
+        }
+
+        return std::make_unique<BlockAST>(loc, stmts);
     }
 
     FunctionASTPtr Parser::parseFunctionDefinition(int functionLevel)
@@ -544,10 +573,10 @@ namespace llvmpascal
                 switch (token.getTokenValue())
                 {
                     case TokenValue::LEFT_PAREN:
-                        return parseParenExpr();
+                        return parseParenExpression();
 
                     case TokenValue::LEFT_SQUARE:
-                        return parseSetExpr();
+                        return parseSetExpression();
 
                     default:
                         assert(0 && "should not reach here, unexpected delimiter.");
@@ -557,18 +586,7 @@ namespace llvmpascal
             default:
             {
                 // TODO:
-                std::string delimiter = "\n";
-                std::string msgPrefix = "Sorry, I have not completed parser work. But if you can see it during test program_test.pas, if you can see this:";
-                std::string msg = R"(
-                                     Real Constant: 1.245e+09
-                                     Integer Constant : 2016
-                                     String Constant : Blue
-                                     )";
-                std::string msgPostfix = "Congradulations, everything is ok!";
-
-                std::cerr << msgPrefix + delimiter + msg + delimiter + msgPostfix << std::endl;
-
-                assert(0 && "Sorry again, I have not completed parser work, I will do it soon.");
+                assert(0 && "Sorry, I have not completed parser work, I will do it soon.");
             }
 
         }
@@ -870,26 +888,56 @@ namespace llvmpascal
     }
 
 
-    ExprASTPtr Parser::parseParenExpr()
+    ExprASTPtr Parser::parseParenExpression()
     {
         // TODO:
-        assert(0 && "I have not implemented parseParenExpr.");
+        assert(0 && "I have not implemented parseParenExpression.");
         return nullptr;
     }
 
-    ExprASTPtr Parser::parseSetExpr()
+    ExprASTPtr Parser::parseSetExpression()
     {
         // TODO:
-        assert(0 && "I have not implemented parseSetExpr.");
+        assert(0 && "I have not implemented parseSetExpression.");
+        return nullptr;
+    }
+
+    ExprASTPtr Parser::parseStatement()
+    {
+        if(auto expr = parsePrimary())
+        {
+            if(validateToken(TokenValue::ASSIGN, true))
+            {
+                auto loc = scanner_.getToken().getTokenLocation();
+                auto rhs = parseExpression();
+
+                if(!rhs)
+                {
+                    errorReport("Invalid syntax");
+                    return nullptr;
+                }
+
+                expr = std::move(std::make_unique<AssignStatementAST>(loc, std::move(expr), std::move(rhs)));
+            }
+
+            return expr;
+        }
+
+        errorReport("Invalid syntax");
         return nullptr;
     }
 
     ExprASTPtr Parser::parseBlockOrStatement()
     {
-        // TODO:
-        // The highest priority.
-        assert(0 && "I have not implemented parseBlockOrStatement.");
-        return nullptr;
+        switch(scanner_.getToken().getTokenValue())
+        {
+        case TokenValue::BEGIN:
+            return parseBlockStatement();
+        case TokenValue::SEMICOLON:
+            return std::make_unique<BlockAST>(scanner_.getToken().getTokenLocation(), VecExprASTPtr{});
+        default:
+            return parseStatement();
+        }
     }
 
     // Helper Functions.
