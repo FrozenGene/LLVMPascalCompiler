@@ -2,9 +2,9 @@
 * File:    parser.cpp
 *
 * Author:  Wu Zhao
-* 
+*
 * Email:   wuzhaozju@gmail.com
-* 
+*
 * Date:    2015/09/07
 *
 * License: BSD
@@ -26,7 +26,7 @@ namespace llvmpascal
 
     // Pascal Program Basic Structure.
     // see: http://pirate.shu.edu/~wachsmut/Teaching/CSAS1111/Notes-Pascal/pascal1.html
-    
+
     /*
 
     PROGRAM ProgramName;
@@ -60,21 +60,21 @@ namespace llvmpascal
         turn procedures and functions in the appropriate
         order.
     END.
-    
+
 
     Meanwhile, according to Pascal standard 6.2.1
 
     block = label-declaration-part constant-definition-part type-definition-part
-            variable-declaration-part procedure-and-function-declaration-part 
-            statement-part 
+            variable-declaration-part procedure-and-function-declaration-part
+            statement-part
 
-    label-declaration-part = [ 'label' label { ',' label } ';' ] 
-    constant-definition-part = [ 'const' constant-definition ' ;' { constant-definition ' ;' }] 
-    type-definition-part = [ 'type' type-definition ' ;' { type-definition ';' } ] 
+    label-declaration-part = [ 'label' label { ',' label } ';' ]
+    constant-definition-part = [ 'const' constant-definition ' ;' { constant-definition ' ;' }]
+    type-definition-part = [ 'type' type-definition ' ;' { type-definition ';' } ]
     variable-declaration-part = [ 'var' variable-declaration ';' { variable-declaration ';' }]
     procedure-and-function-declaration-part = { ( procedure-declaration | function-declaration ';') }
-    
-    So, we should contain these parts into the basic program structure we mentioned just now omitted, 
+
+    So, we should contain these parts into the basic program structure we mentioned just now omitted,
     such as constant definition part, type definition part and so on.
 
     */
@@ -94,13 +94,13 @@ namespace llvmpascal
         }
 
         // TODO: input, output variable declaration. They will be text type
-        // according to Pascal standard (but I have not added type system now, just 
+        // according to Pascal standard (but I have not added type system now, just
         // leave here).
-        // 
+        //
         // The original quote:
-        // The occurrence of the required identifier input or output as a 
+        // The occurrence of the required identifier input or output as a
         // program-parameter shall constitute its defining-point for the
-        // region that is the program-block as a variable-identifier of 
+        // region that is the program-block as a variable-identifier of
         // the required type denoted by the required type-identifier text
         //
 
@@ -182,8 +182,8 @@ namespace llvmpascal
 
     // diagram show:
     /*
-       PROGRAM -> IDENTIFIER -> [ '(' -> IDENTIFIER [, IDENTIFIER ... ] -> ')' ] -> ';' 
-    
+       PROGRAM -> IDENTIFIER -> [ '(' -> IDENTIFIER [, IDENTIFIER ... ] -> ')' ] -> ';'
+
     */
 
     // Example:
@@ -208,14 +208,14 @@ namespace llvmpascal
 
         scanner_.getNextToken();
 
-        // if there is '(', eat it and go on. 
+        // if there is '(', eat it and go on.
         // Otherwise, just stay here and wait to parser's next command :-)
         // In fact, if we want to do better, we can make the second parameter of
         // validateToken is false, then use expectToken function to give user better
         // error message about LEFT_PAREN / RIGHT PAREN, if you like it, modify and try!
         if (validateToken(TokenValue::LEFT_PAREN, true))
         {
-            do 
+            do
             {
                 if (!expectToken(TokenType::IDENTIFIER, "identifier", true))
                 {
@@ -269,7 +269,7 @@ namespace llvmpascal
                 return nullptr;
             }
         }
-        
+
         if(!expectToken(TokenValue::END, "end", true))
         {
             return nullptr;
@@ -303,7 +303,7 @@ namespace llvmpascal
     // constant-definition = identifier '=' constant
     // constant = [sign](unsigned - number | constant - identifier)
     //          | character-string
-    
+
     /*
        [Example]
 
@@ -313,7 +313,7 @@ namespace llvmpascal
            pi = 3.14159;
 
        [/Example]
-           
+
     */
     void Parser::parseConstantDefinition()
     {
@@ -322,7 +322,7 @@ namespace llvmpascal
             return;
         }
 
-        do 
+        do
         {
             if (!expectToken(TokenType::IDENTIFIER, "identifier", false))
             {
@@ -503,7 +503,7 @@ namespace llvmpascal
                 // TODO:
                 // constDeclPtr = parseConstRhs(precedence, constDeclPtr);
             }
-            
+
 
         } while (!validateToken(TokenValue::SEMICOLON, false) &&
                  !validateToken(TokenValue::RIGHT_PAREN, false));
@@ -532,7 +532,7 @@ namespace llvmpascal
         // TODO:
         //
         // NOTE:
-        // getTokenType??? 
+        // getTokenType???
         // MAYBE we can consider tokentype and then nest tokenvalue???
         // because I want only one entrance.
 
@@ -599,7 +599,7 @@ namespace llvmpascal
     {
         if (token.getTokenType() == TokenType::IDENTIFIER)
         {
-            // TODO: 
+            // TODO:
             // if this is a constant identifier, we will translate it to get its value.
             // i.e. call XXXConstant::getValue() function.
         }
@@ -617,14 +617,14 @@ namespace llvmpascal
     /*
     see pascal standard 6 .8.3 .4
     If-statements
-    
+
     if-statement = 'if' Boolean-expression 'then' statement [ else-part ]
     else-part = 'else' statement
 
     [Example]
-        
+
         if x < 1 .5 then z := x + y else z := 1 .5
-        
+
         if p1 <> nil then p1 := p1
 
         if j = 0 then
@@ -649,7 +649,7 @@ namespace llvmpascal
         {
             return nullptr;
         }
-        
+
         auto condition = parseExpression();
 
         if (!condition)
@@ -695,7 +695,7 @@ namespace llvmpascal
 
     // For example
     /*
-    
+
     [Example]
 
     case operator of
@@ -705,7 +705,7 @@ namespace llvmpascal
     end
 
     [/Example]
-    
+
     */
     ExprASTPtr Parser::parseCaseStatement()
     {
@@ -713,15 +713,15 @@ namespace llvmpascal
         assert(0 && "I have not implemented parseCaseStatement.");
         return nullptr;
     }
-    
+
     // 6.8.3.9 For-statements
-    // for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) 
+    // for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' )
     //                  final-value 'do' statement
     //
     // control-variable = entire-variable
     // initial-value = expression
     // fi nal-value = expression
-    
+
     // for v := e1 to | downto e2 do body
     ExprASTPtr Parser::parseForStatement()
     {
@@ -770,7 +770,7 @@ namespace llvmpascal
         }
 
         auto endExpr = parseExpression();
-        
+
         if(!endExpr)
         {
             return nullptr;
@@ -782,7 +782,7 @@ namespace llvmpascal
         }
 
         auto body = parseBlockOrStatement();
-        
+
         if(!body)
         {
             return nullptr;
@@ -790,7 +790,7 @@ namespace llvmpascal
 
         return std::make_unique<ForStatementAST>(loc, controlVariable,
             std::move(startExpr), std::move(endExpr), downOrder, std::move(body));
-        
+
     }
 
     // 6.8.3.8: While-statements
@@ -917,7 +917,10 @@ namespace llvmpascal
                     return nullptr;
                 }
 
-                expr = std::move(std::make_unique<AssignStatementAST>(loc, std::move(expr), std::move(rhs)));
+                // move assignment operator
+                // transfer the ownship from the rhs to lhs. And as if call lhs.reset(rhs.release())
+                // so the lhs of resource object is destroyed rightly.
+                expr = std::make_unique<AssignStatementAST>(loc, std::move(expr), std::move(rhs));
             }
 
             return expr;
